@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ficha de Cadastro do Colaborador</title>
+<meta name="description" content="Ficha de cadastro para novos colaboradores" />
+<link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true">
+  <span class="blob blob-1"></span>
+  <span class="blob blob-2"></span>
+  <span class="blob blob-3"></span>
+</div>
+
+<main class="shell">
+  <section class="hero glass">
+    <span class="badge-pill"><span class="dot"></span>Boas-vindas ao time</span>
+    <h1>Ficha de Cadastro</h1>
+    <p>Preencha seus dados com calma — leva uns 5 minutos. As informações pessoais são usadas pelo RH, e as curiosidades nos ajudam a tornar seu dia a dia mais especial por aqui.</p>
+  </section>
+
+  <div class="progress-track" id="progress-track"></div>
+  <div class="progress-label" id="progress-label">Passo 1 de 5 · Dados Pessoais</div>
+
+  <form id="cadastro-form" novalidate>
+
+    <!-- PASSO 1: DADOS PESSOAIS -->
+    <section class="card glass step-panel active" data-step="1">
+      <h2 class="card-title"><span class="icon">①</span>Dados Pessoais</h2>
+      <p class="card-sub">Suas informações básicas de identificação.</p>
+      <div class="field-grid">
+        <div class="field span-2">
+          <label>Nome completo <span class="req">*</span></label>
+          <input type="text" name="nomeCompleto" required />
+        </div>
+        <div class="field span-2">
+          <label>Nome pelo qual gosta de ser chamado(a)</label>
+          <input type="text" name="nomeSocial" />
+        </div>
+        <div class="field">
+          <label>Data de nascimento <span class="req">*</span></label>
+          <input type="date" name="dataNascimento" required />
+        </div>
+        <div class="field">
+          <label>Escolaridade</label>
+          <select name="escolaridade">
+            <option value="">Selecione</option>
+            <option>Ensino Fundamental</option>
+            <option>Ensino Médio</option>
+            <option>Ensino Superior incompleto</option>
+            <option>Ensino Superior completo</option>
+            <option>Pós-graduação</option>
+            <option>Mestrado/Doutorado</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>RG</label>
+          <input type="text" name="rg" />
+        </div>
+        <div class="field">
+          <label>Órgão emissor</label>
+          <input type="text" name="rgEmissor" />
+        </div>
+        <div class="field">
+          <label>Data de expedição</label>
+          <input type="date" name="rgDataExpedicao" />
+        </div>
+        <div class="field">
+          <label>CPF <span class="req">*</span></label>
+          <input type="text" name="cpf" placeholder="000.000.000-00" required />
+        </div>
+        <div class="field">
+          <label>PIS</label>
+          <input type="text" name="pis" />
+        </div>
+        <div class="field">
+          <label>Sexo</label>
+          <select name="sexo">
+            <option value="">Selecione</option>
+            <option>Feminino</option>
+            <option>Masculino</option>
+            <option>Prefiro não informar</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Estado civil</label>
+          <select name="estadoCivil">
+            <option value="">Selecione</option>
+            <option>Solteiro(a)</option>
+            <option>Casado(a)</option>
+            <option>União estável</option>
+            <option>Divorciado(a)</option>
+            <option>Viúvo(a)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Telefone <span class="req">*</span></label>
+          <input type="tel" name="telefone" placeholder="(00) 00000-0000" required />
+        </div>
+        <div class="field">
+          <label>E-mail pessoal <span class="req">*</span></label>
+          <input type="email" name="emailPessoal" required />
+        </div>
+        <div class="field span-2">
+          <label>Endereço (rua, número, complemento)</label>
+          <input type="text" name="endereco" />
+        </div>
+        <div class="field">
+          <label>Bairro</label>
+          <input type="text" name="bairro" />
+        </div>
+        <div class="field">
+          <label>CEP</label>
+          <input type="text" name="cep" placeholder="00000-000" />
+        </div>
+        <div class="field span-2">
+          <label>Cidade/Estado onde reside</label>
+          <input type="text" name="cidadeEstado" placeholder="Ex: Rio de Janeiro/RJ" />
+        </div>
+      </div>
+      <div class="step-nav">
+        <span></span>
+        <button type="button" class="btn btn-primary" data-next>Próximo →</button>
+      </div>
+    </section>
+
+    <!-- PASSO 2: BANCO + EMERGENCIA -->
+    <section class="card glass step-panel" data-step="2">
+      <h2 class="card-title"><span class="icon">②</span>Dados Bancários e Contato de Emergência</h2>
+      <p class="card-sub">Para o pagamento e para sabermos quem acionar em caso de necessidade.</p>
+
+      <div class="field-grid">
+        <div class="field span-2">
+          <label>Possui conta no Banco do Brasil? <span class="field-hint">(caso não possua, favor informar ao RH)</span></label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="contaBB" value="Sim" id="contaBB-sim" /><label for="contaBB-sim">Sim</label></span>
+            <span class="chip"><input type="radio" name="contaBB" value="Não" id="contaBB-nao" /><label for="contaBB-nao">Não</label></span>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Tipo de conta</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="tipoConta" value="Conta Corrente" id="tipo-corrente" /><label for="tipo-corrente">Conta Corrente</label></span>
+            <span class="chip"><input type="radio" name="tipoConta" value="Poupança" id="tipo-poupanca" /><label for="tipo-poupanca">Poupança</label></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Agência</label>
+          <input type="text" name="agencia" />
+        </div>
+        <div class="field">
+          <label>Conta</label>
+          <input type="text" name="conta" />
+        </div>
+      </div>
+
+      <h3 style="margin:26px 0 14px; font-size:14.5px; color:var(--text-2);">Contato de emergência</h3>
+      <div class="field-grid">
+        <div class="field span-2">
+          <label>Nome <span class="req">*</span></label>
+          <input type="text" name="emergenciaNome" required />
+        </div>
+        <div class="field">
+          <label>Grau de parentesco</label>
+          <input type="text" name="emergenciaParentesco" />
+        </div>
+        <div class="field">
+          <label>Telefone <span class="req">*</span></label>
+          <input type="tel" name="emergenciaTelefone" placeholder="(00) 00000-0000" required />
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-prev>← Voltar</button>
+        <button type="button" class="btn btn-primary" data-next>Próximo →</button>
+      </div>
+    </section>
+
+    <!-- PASSO 3: SOBRE VOCE -->
+    <section class="card glass step-panel" data-step="3">
+      <h2 class="card-title"><span class="icon">③</span>Sobre Você</h2>
+      <p class="card-sub">Curiosidades que usamos pra deixar a integração e o dia a dia mais leves.</p>
+
+      <div class="field-grid">
+        <div class="field span-2">
+          <label>Conte um pouco sobre você (hobbies, interesses e curiosidades)</label>
+          <textarea name="sobreVoce"></textarea>
+        </div>
+        <div class="field span-2">
+          <label>Quais são seus hobbies favoritos?</label>
+          <div class="chip-group" data-checklist="hobbies">
+            <span class="chip"><input type="checkbox" name="hobbies" value="Esportes" id="hob-1" /><label for="hob-1">Esportes</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Leitura" id="hob-2" /><label for="hob-2">Leitura</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Filmes e séries" id="hob-3" /><label for="hob-3">Filmes e séries</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Música" id="hob-4" /><label for="hob-4">Música</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Viagens" id="hob-5" /><label for="hob-5">Viagens</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Games" id="hob-6" /><label for="hob-6">Games</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Gastronomia" id="hob-7" /><label for="hob-7">Gastronomia</label></span>
+            <span class="chip"><input type="checkbox" name="hobbies" value="Outros" id="hob-8" data-toggle-conditional="hobbiesOutroBox" /><label for="hob-8">Outros</label></span>
+          </div>
+          <div class="conditional" id="hobbiesOutroBox">
+            <input type="text" name="hobbiesOutro" placeholder="Qual?" />
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Fumante?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="fumante" value="Não" id="fum-nao" /><label for="fum-nao">Não</label></span>
+            <span class="chip"><input type="radio" name="fumante" value="Sim" id="fum-sim" /><label for="fum-sim">Sim</label></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>Qual seu time de futebol?</label>
+          <input type="text" name="timeFutebol" />
+        </div>
+        <div class="field">
+          <label>Qual seu estilo musical favorito?</label>
+          <input type="text" name="estiloMusical" />
+        </div>
+        <div class="field">
+          <label>Qual sua comida preferida?</label>
+          <input type="text" name="comidaPreferida" />
+        </div>
+        <div class="field">
+          <label>Qual seu filme ou série favorita?</label>
+          <input type="text" name="filmeSerie" />
+        </div>
+        <div class="field span-2">
+          <label>Possui alguma habilidade ou talento que poucas pessoas conhecem?</label>
+          <textarea name="talento"></textarea>
+        </div>
+        <div class="field span-2">
+          <label>Você possui alguma necessidade específica ou adaptação que possa contribuir para seu bem-estar e desempenho no ambiente de trabalho?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="necessidadeEspecifica" value="Não" id="nec-nao" /><label for="nec-nao">Não</label></span>
+            <span class="chip"><input type="radio" name="necessidadeEspecifica" value="Sim" id="nec-sim" data-toggle-conditional="necessidadeBox" /><label for="nec-sim">Sim</label></span>
+          </div>
+          <div class="conditional" id="necessidadeBox">
+            <textarea name="necessidadeDescricao" placeholder="Se desejar, descreva"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-prev>← Voltar</button>
+        <button type="button" class="btn btn-primary" data-next>Próximo →</button>
+      </div>
+    </section>
+
+    <!-- PASSO 4: RECONHECIMENTO + ANIVERSARIO -->
+    <section class="card glass step-panel" data-step="4">
+      <h2 class="card-title"><span class="icon">④</span>Reconhecimento e Comemorações</h2>
+      <p class="card-sub">Como prefere ser celebrado(a) e reconhecido(a) por aqui.</p>
+
+      <div class="field-grid">
+        <div class="field span-2">
+          <label>Como você prefere receber reconhecimento?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="reconhecimento" value="Elogio em público" id="rec-1" /><label for="rec-1">Elogio em público</label></span>
+            <span class="chip"><input type="radio" name="reconhecimento" value="Mensagem particular" id="rec-2" /><label for="rec-2">Mensagem particular</label></span>
+            <span class="chip"><input type="radio" name="reconhecimento" value="Certificado" id="rec-3" /><label for="rec-3">Certificado</label></span>
+            <span class="chip"><input type="radio" name="reconhecimento" value="Premiação" id="rec-4" /><label for="rec-4">Premiação</label></span>
+            <span class="chip"><input type="radio" name="reconhecimento" value="Não tenho preferência" id="rec-5" /><label for="rec-5">Não tenho preferência</label></span>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Gosta de participar de ações internas?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="participaAcoes" value="Sim" id="part-sim" /><label for="part-sim">Sim</label></span>
+            <span class="chip"><input type="radio" name="participaAcoes" value="Não" id="part-nao" /><label for="part-nao">Não</label></span>
+            <span class="chip"><input type="radio" name="participaAcoes" value="Às vezes" id="part-vezes" /><label for="part-vezes">Às vezes</label></span>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Tem interesse em participar de campanhas internas, eventos ou gravações de comunicação?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="interesseCampanhas" value="Sim" id="camp-sim" /><label for="camp-sim">Sim</label></span>
+            <span class="chip"><input type="radio" name="interesseCampanhas" value="Não" id="camp-nao" /><label for="camp-nao">Não</label></span>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Qual seria seu presente ideal em uma ação de aniversário?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="presenteIdeal" value="Vale-presente" id="pres-1" /><label for="pres-1">Vale-presente</label></span>
+            <span class="chip"><input type="radio" name="presenteIdeal" value="Livros" id="pres-2" /><label for="pres-2">Livros</label></span>
+            <span class="chip"><input type="radio" name="presenteIdeal" value="Chocolates" id="pres-3" /><label for="pres-3">Chocolates</label></span>
+            <span class="chip"><input type="radio" name="presenteIdeal" value="Experiência (cinema, restaurante etc.)" id="pres-4" /><label for="pres-4">Experiência</label></span>
+            <span class="chip"><input type="radio" name="presenteIdeal" value="Itens de escritório" id="pres-5" /><label for="pres-5">Itens de escritório</label></span>
+            <span class="chip"><input type="radio" name="presenteIdeal" value="Outro" id="pres-6" data-toggle-conditional="presenteOutroBox" /><label for="pres-6">Outro</label></span>
+          </div>
+          <div class="conditional" id="presenteOutroBox">
+            <input type="text" name="presenteOutro" placeholder="Qual?" />
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Qual seu tipo de chocolate preferido?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Ao leite" id="choc-1" /><label for="choc-1">Ao leite</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Branco" id="choc-2" /><label for="choc-2">Branco</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Meio amargo" id="choc-3" /><label for="choc-3">Meio amargo</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Amargo" id="choc-4" /><label for="choc-4">Amargo</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Com castanhas" id="choc-5" /><label for="choc-5">Com castanhas</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Recheado" id="choc-6" /><label for="choc-6">Recheado</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Não gosto de chocolate" id="choc-7" /><label for="choc-7">Não gosto</label></span>
+            <span class="chip"><input type="radio" name="tipoChocolate" value="Outro" id="choc-8" data-toggle-conditional="chocOutroBox" /><label for="choc-8">Outro</label></span>
+          </div>
+          <div class="conditional" id="chocOutroBox">
+            <input type="text" name="chocolateOutro" placeholder="Qual?" />
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Possui alguma restrição alimentar?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="restricaoAlimentar" value="Não" id="rest-nao" /><label for="rest-nao">Não</label></span>
+            <span class="chip"><input type="radio" name="restricaoAlimentar" value="Sim" id="rest-sim" data-toggle-conditional="restricaoBox" /><label for="rest-sim">Sim</label></span>
+          </div>
+          <div class="conditional" id="restricaoBox">
+            <div class="chip-group" style="margin-top:10px;">
+              <span class="chip"><input type="checkbox" name="restricoes" value="Intolerância à lactose" id="r-1" /><label for="r-1">Intolerância à lactose</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Intolerância ao glúten" id="r-2" /><label for="r-2">Intolerância ao glúten</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Diabetes" id="r-3" /><label for="r-3">Diabetes</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Alergia a amendoim" id="r-4" /><label for="r-4">Alergia a amendoim</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Alergia a castanhas" id="r-5" /><label for="r-5">Alergia a castanhas</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Alergia a frutos do mar" id="r-6" /><label for="r-6">Alergia a frutos do mar</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Vegetarianismo" id="r-7" /><label for="r-7">Vegetarianismo</label></span>
+              <span class="chip"><input type="checkbox" name="restricoes" value="Veganismo" id="r-8" /><label for="r-8">Veganismo</label></span>
+            </div>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Há algum alimento que você não consome ou prefere evitar?</label>
+          <textarea name="alimentoEvita"></textarea>
+        </div>
+        <div class="field span-2">
+          <label>Qual sua bebida preferida para eventos corporativos?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Refrigerante" id="beb-1" /><label for="beb-1">Refrigerante</label></span>
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Suco" id="beb-2" /><label for="beb-2">Suco</label></span>
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Água" id="beb-3" /><label for="beb-3">Água</label></span>
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Café" id="beb-4" /><label for="beb-4">Café</label></span>
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Chá" id="beb-5" /><label for="beb-5">Chá</label></span>
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Energético" id="beb-6" /><label for="beb-6">Energético</label></span>
+            <span class="chip"><input type="radio" name="bebidaPreferida" value="Outra" id="beb-7" data-toggle-conditional="bebidaOutroBox" /><label for="beb-7">Outra</label></span>
+          </div>
+          <div class="conditional" id="bebidaOutroBox">
+            <input type="text" name="bebidaOutro" placeholder="Qual?" />
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-prev>← Voltar</button>
+        <button type="button" class="btn btn-primary" data-next>Próximo →</button>
+      </div>
+    </section>
+
+    <!-- PASSO 5: ACOES INTERNAS (OPCIONAL) -->
+    <section class="card glass step-panel" data-step="5">
+      <h2 class="card-title"><span class="icon">⑤</span>Ações Internas <span style="font-weight:500; font-size:13px; color:var(--text-3);">(opcional)</span></h2>
+      <p class="card-sub">Últimos detalhes, pra brindes e uniformes acertarem de primeira.</p>
+
+      <div class="field-grid">
+        <div class="field span-2">
+          <label>Tamanho de camiseta/uniforme</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="tamanhoCamiseta" value="PP" id="tam-1" /><label for="tam-1">PP</label></span>
+            <span class="chip"><input type="radio" name="tamanhoCamiseta" value="P" id="tam-2" /><label for="tam-2">P</label></span>
+            <span class="chip"><input type="radio" name="tamanhoCamiseta" value="M" id="tam-3" /><label for="tam-3">M</label></span>
+            <span class="chip"><input type="radio" name="tamanhoCamiseta" value="G" id="tam-4" /><label for="tam-4">G</label></span>
+            <span class="chip"><input type="radio" name="tamanhoCamiseta" value="GG" id="tam-5" /><label for="tam-5">GG</label></span>
+            <span class="chip"><input type="radio" name="tamanhoCamiseta" value="XG" id="tam-6" /><label for="tam-6">XG</label></span>
+          </div>
+        </div>
+        <div class="field span-2">
+          <label>Qual loja ou tipo de vale-presente você mais gostaria de receber?</label>
+          <input type="text" name="lojaValePresente" />
+        </div>
+        <div class="field span-2">
+          <label>Tem alguma preferência para brindes corporativos?</label>
+          <div class="chip-group">
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Tecnologia" id="bri-1" /><label for="bri-1">Tecnologia</label></span>
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Livros" id="bri-2" /><label for="bri-2">Livros</label></span>
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Papelaria" id="bri-3" /><label for="bri-3">Papelaria</label></span>
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Alimentação" id="bri-4" /><label for="bri-4">Alimentação</label></span>
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Bem-estar" id="bri-5" /><label for="bri-5">Bem-estar</label></span>
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Esportes" id="bri-6" /><label for="bri-6">Esportes</label></span>
+            <span class="chip"><input type="radio" name="brindePreferencia" value="Outro" id="bri-7" data-toggle-conditional="brindeOutroBox" /><label for="bri-7">Outro</label></span>
+          </div>
+          <div class="conditional" id="brindeOutroBox">
+            <input type="text" name="brindeOutro" placeholder="Qual?" />
+          </div>
+        </div>
+      </div>
+
+      <div class="error-banner" id="error-banner"></div>
+
+      <div class="step-nav">
+        <button type="button" class="btn btn-ghost" data-prev>← Voltar</button>
+        <button type="submit" class="btn btn-primary" id="submit-btn">Enviar ficha</button>
+      </div>
+    </section>
+
+  </form>
+
+  <section class="success-screen glass" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Ficha enviada com sucesso!</h2>
+    <p>Obrigado por preencher seus dados. O time de RH já recebeu suas informações e vai entrar em contato se precisar de algo mais. Seja muito bem-vindo(a)!</p>
+  </section>
+
+  <p class="footer-note">Seus dados são usados exclusivamente pelo time de Recursos Humanos para fins de cadastro e integração.</p>
+</main>
+
+<script src="assets/js/form.js"></script>
+</body>
+</html>
