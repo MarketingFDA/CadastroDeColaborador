@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const { google } = require('googleapis');
 
 const app = express();
 app.use(express.json({ limit: '256kb' }));
@@ -115,30 +115,64 @@ function buildEmailText(data) {
   }).join('\n');
 }
 
-let cachedTransporter = null;
-
-function getTransporter() {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
-  if (!user || !pass) {
-    throw new Error('GMAIL_USER/GMAIL_APP_PASSWORD não configurados no backend');
+// Envio via Gmail API (HTTPS, porta 443) em vez de SMTP — o Render bloqueia
+// conexões SMTP de saída (portas 25/465/587) no plano free desde set/2025,
+// então nodemailer com SMTP direto nunca conectaria por aqui.
+function getGmailClient() {
+  const { GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN } = process.env;
+  if (!GMAIL_CLIENT_ID || !GMAIL_CLIENT_SECRET || !GMAIL_REFRESH_TOKEN) {
+    throw new Error('GMAIL_CLIENT_ID/GMAIL_CLIENT_SECRET/GMAIL_REFRESH_TOKEN não configurados no backend');
   }
-  if (cachedTransporter) return cachedTransporter;
+  const oauth2Client = new google.auth.OAuth2(
+    GMAIL_CLIENT_ID,
+    GMAIL_CLIENT_SECRET,
+    'https://developers.google.com/oauthplayground',
+  );
+  oauth2Client.setCredentials({ refresh_token: GMAIL_REFRESH_TOKEN });
+  return google.gmail({ version: 'v1', auth: oauth2Client });
+}
 
-  // Host/porta explícitos em vez do atalho service:'gmail' — mais fácil de
-  // diagnosticar, e com timeouts curtos pra nunca deixar a requisição travada
-  // pra sempre (sem timeout, uma SMTP travada faz o Express nunca responder).
-  cachedTransporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    requireTLS: true,
-    auth: { user, pass: pass.replace(/\s+/g, '') },
-    connectionTimeout: 10_000,
-    greetingTimeout: 10_000,
-    socketTimeout: 15_000,
-  });
-  return cachedTransporter;
+function base64UrlEncode(str) {
+  return Buffer.from(str, 'utf-8')
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+function encodeSubject(subject) {
+  return `=?UTF-8?B?${Buffer.from(subject, 'utf-8').toString('base64')}?=`;
+}
+
+function buildRawMessage({ from, to, replyTo, subject, text, html }) {
+  const boundary = `b_${Date.now()}`;
+  const lines = [
+    `From: ${from}`,
+    `To: ${to}`,
+    replyTo ? `Reply-To: ${replyTo}` : null,
+    `Subject: ${encodeSubject(subject)}`,
+    'MIME-Version: 1.0',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset="UTF-8"',
+    '',
+    text,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset="UTF-8"',
+    '',
+    html,
+    '',
+    `--${boundary}--`,
+  ].filter((line) => line !== null);
+  return base64UrlEncode(lines.join('\r\n'));
+}
+
+async function sendViaGmailApi({ to, replyTo, subject, text, html }) {
+  const gmail = getGmailClient();
+  const raw = buildRawMessage({ from: process.env.GMAIL_USER, to, replyTo, subject, text, html });
+  await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
 }
 
 app.post('/submit', async (req, res) => {
@@ -159,9 +193,7 @@ app.post('/submit', async (req, res) => {
   }
 
   try {
-    const transporter = getTransporter();
-    await transporter.sendMail({
-      from: `"Ficha de Cadastro" <${process.env.GMAIL_USER}>`,
+    await sendViaGmailApi({
       to: recipients.join(', '),
       replyTo: data.emailPessoal,
       subject: `Nova ficha de cadastro — ${data.nomeCompleto}`,
@@ -170,7 +202,7 @@ app.post('/submit', async (req, res) => {
     });
     res.json({ ok: true });
   } catch (err) {
-    console.error('Falha ao enviar email da ficha de cadastro:', err.message);
+    console.error('Falha ao enviar email da ficha de cadastro:', err?.response?.data || err.message);
     res.status(502).json({ message: 'Não foi possível enviar agora. Tente novamente em instantes.' });
   }
 });
