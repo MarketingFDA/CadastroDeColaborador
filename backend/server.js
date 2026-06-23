@@ -130,8 +130,9 @@ function getTransporter() {
   // pra sempre (sem timeout, uma SMTP travada faz o Express nunca responder).
   cachedTransporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: { user, pass: pass.replace(/\s+/g, '') },
     connectionTimeout: 10_000,
     greetingTimeout: 10_000,
