@@ -115,16 +115,29 @@ function buildEmailText(data) {
   }).join('\n');
 }
 
+let cachedTransporter = null;
+
 function getTransporter() {
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASSWORD;
   if (!user || !pass) {
     throw new Error('GMAIL_USER/GMAIL_APP_PASSWORD não configurados no backend');
   }
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user, pass },
+  if (cachedTransporter) return cachedTransporter;
+
+  // Host/porta explícitos em vez do atalho service:'gmail' — mais fácil de
+  // diagnosticar, e com timeouts curtos pra nunca deixar a requisição travada
+  // pra sempre (sem timeout, uma SMTP travada faz o Express nunca responder).
+  cachedTransporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: { user, pass: pass.replace(/\s+/g, '') },
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
   });
+  return cachedTransporter;
 }
 
 app.post('/submit', async (req, res) => {
