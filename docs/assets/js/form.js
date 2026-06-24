@@ -1,6 +1,4 @@
-// Configuração do endpoint do backend (Render). Pode ser sobrescrita via
-// window.__CADASTRO_API_BASE_URL__ antes deste script carregar.
-const API_BASE_URL = window.__CADASTRO_API_BASE_URL__ || 'https://cadastro-colaborador-backend.onrender.com';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIYICOdOqFOLkqY0QgVMoemDI0_T7xSW0fxye26llOqvlm2N2b5iOHxbQa9h3rfvbYlw/exec';
 
 const TOTAL_STEPS = 5;
 const STEP_LABELS = {
@@ -123,9 +121,9 @@ form.addEventListener('submit', async (e) => {
   submitBtn.innerHTML = '<span class="spinner"></span>Enviando...';
 
   try {
-    const res = await fetch(`${API_BASE_URL}/submit`, {
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(collectFormData()),
     });
     if (!res.ok) {
