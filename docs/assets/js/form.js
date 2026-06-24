@@ -111,6 +111,131 @@ function hideError() {
   errorBanner.classList.remove('show');
 }
 
+const FIELD_LABELS = [
+  { section: 'Dados Pessoais' },
+  ['nomeCompleto', 'Nome completo'],
+  ['nomeSocial', 'Nome pelo qual gosta de ser chamado(a)'],
+  ['dataNascimento', 'Data de nascimento'],
+  ['escolaridade', 'Escolaridade'],
+  ['rg', 'RG'],
+  ['rgEmissor', 'Órgão emissor'],
+  ['rgDataExpedicao', 'Data de expedição'],
+  ['cpf', 'CPF'],
+  ['pis', 'PIS'],
+  ['sexo', 'Sexo'],
+  ['estadoCivil', 'Estado civil'],
+  ['telefone', 'Telefone'],
+  ['emailPessoal', 'E-mail pessoal'],
+  ['endereco', 'Endereço'],
+  ['bairro', 'Bairro'],
+  ['cep', 'CEP'],
+  ['cidadeEstado', 'Cidade/Estado onde reside'],
+  { section: 'Dados Bancários' },
+  ['contaBB', 'Possui conta no Banco do Brasil?'],
+  ['tipoConta', 'Tipo de conta'],
+  ['agencia', 'Agência'],
+  ['conta', 'Conta'],
+  { section: 'Contato de Emergência' },
+  ['emergenciaNome', 'Nome'],
+  ['emergenciaParentesco', 'Grau de parentesco'],
+  ['emergenciaTelefone', 'Telefone'],
+  { section: 'Sobre Você' },
+  ['sobreVoce', 'Conte um pouco sobre você'],
+  ['hobbies', 'Hobbies favoritos'],
+  ['hobbiesOutro', 'Outro hobby'],
+  ['fumante', 'Fumante'],
+  ['timeFutebol', 'Time de futebol'],
+  ['estiloMusical', 'Estilo musical favorito'],
+  ['comidaPreferida', 'Comida preferida'],
+  ['filmeSerie', 'Filme ou série favorita'],
+  ['talento', 'Habilidade ou talento pouco conhecido'],
+  ['necessidadeEspecifica', 'Possui necessidade específica/adaptação?'],
+  ['necessidadeDescricao', 'Descrição da necessidade'],
+  { section: 'Reconhecimento e Comunicação' },
+  ['reconhecimento', 'Como prefere receber reconhecimento'],
+  ['participaAcoes', 'Gosta de participar de ações internas?'],
+  ['interesseCampanhas', 'Interesse em campanhas/eventos/gravações'],
+  { section: 'Aniversário e Comemorações' },
+  ['presenteIdeal', 'Presente ideal de aniversário'],
+  ['presenteOutro', 'Outro presente'],
+  ['tipoChocolate', 'Tipo de chocolate preferido'],
+  ['chocolateOutro', 'Outro chocolate'],
+  ['restricaoAlimentar', 'Possui restrição alimentar?'],
+  ['restricoes', 'Quais restrições'],
+  ['alimentoEvita', 'Alimento que evita'],
+  ['bebidaPreferida', 'Bebida preferida em eventos'],
+  ['bebidaOutro', 'Outra bebida'],
+  { section: 'Ações Internas (opcional)' },
+  ['tamanhoCamiseta', 'Tamanho de camiseta/uniforme'],
+  ['lojaValePresente', 'Loja/tipo de vale-presente preferido'],
+  ['brindePreferencia', 'Preferência de brinde corporativo'],
+  ['brindeOutro', 'Outro brinde'],
+];
+
+function buildPDF(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const marginL = 15, marginR = 15, pageW = 210;
+  const colLabel = marginL, colValue = 85, maxW = pageW - marginR - colValue;
+  let y = 20;
+
+  const checkPage = (needed = 8) => {
+    if (y + needed > 280) { doc.addPage(); y = 20; }
+  };
+
+  // Cabeçalho
+  doc.setFillColor(99, 102, 241);
+  doc.rect(0, 0, 210, 14, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Ficha de Cadastro de Colaborador — Fradema', marginL, 9.5);
+  doc.setTextColor(200, 200, 200);
+  doc.setFontSize(8);
+  const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  doc.text('Gerado em ' + agora, pageW - marginR, 9.5, { align: 'right' });
+  y = 22;
+
+  FIELD_LABELS.forEach((entry) => {
+    if (entry.section) {
+      checkPage(12);
+      doc.setDrawColor(99, 102, 241);
+      doc.setLineWidth(0.4);
+      doc.line(marginL, y, pageW - marginR, y);
+      y += 4;
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(99, 102, 241);
+      doc.text(entry.section.toUpperCase(), marginL, y);
+      y += 6;
+      return;
+    }
+    const [key, label] = entry;
+    let val = data[key];
+    if (!val || (Array.isArray(val) && val.length === 0)) return;
+    if (Array.isArray(val)) val = val.join(', ');
+    val = String(val);
+
+    const lines = doc.splitTextToSize(val, maxW);
+    const needed = Math.max(lines.length * 5, 6);
+    checkPage(needed + 2);
+
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(91, 97, 120);
+    doc.text(label, colLabel, y);
+
+    doc.setTextColor(31, 35, 51);
+    doc.setFont('helvetica', 'bold');
+    doc.text(lines, colValue, y);
+
+    y += needed + 1;
+  });
+
+  return doc.output('datauristring').split(',')[1];
+}
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!validateStep(currentStep)) return;
@@ -121,10 +246,15 @@ form.addEventListener('submit', async (e) => {
   submitBtn.innerHTML = '<span class="spinner"></span>Enviando...';
 
   try {
+    const data = collectFormData();
+    const pdfBase64 = buildPDF(data);
+    const nome = data.nomeCompleto || 'Colaborador';
+    const fileName = 'Cadastro_' + nome.replace(/\s+/g, '_') + '.pdf';
+
     const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(collectFormData()),
+      body: JSON.stringify({ ...data, pdfBase64, fileName }),
     });
     if (!res.ok) {
       let message = 'Não foi possível enviar agora. Tente novamente em instantes.';
