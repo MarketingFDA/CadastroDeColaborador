@@ -483,7 +483,7 @@
   <div class="a11y-divider"></div>
   <div class="a11y-section-label">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13" style="margin-right:5px;vertical-align:middle;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-    Acessibilidade auditiva
+    Acessibilidade visual
   </div>
   <div class="a11y-toggle-row">
     <div>
@@ -502,6 +502,34 @@
     <button class="a11y-switch" id="labels-toggle" role="switch" aria-checked="false" aria-label="Mostrar legendas nos botões" onclick="toggleLabels()">
       <span class="a11y-switch-knob"></span>
     </button>
+  </div>
+
+  <div class="a11y-divider"></div>
+  <div class="a11y-section-label">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13" style="margin-right:5px;vertical-align:middle;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+    Leitura em voz alta
+  </div>
+  <div class="tts-not-supported" id="tts-not-supported" style="display:none;">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13" style="margin-right:4px;vertical-align:middle;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Navegador não suporta leitura por voz.
+  </div>
+  <div id="tts-controls">
+    <div class="a11y-toggle-row">
+      <div>
+        <div class="a11y-toggle-title">Leitura automática</div>
+        <div class="a11y-toggle-desc">Lê as perguntas ao avançar passos</div>
+      </div>
+      <button class="a11y-switch" id="autoread-toggle" role="switch" aria-checked="false" aria-label="Ativar leitura automática" onclick="toggleAutoRead()">
+        <span class="a11y-switch-knob"></span>
+      </button>
+    </div>
+    <div class="tts-voice-row" id="tts-voice-row">
+      <label class="tts-voice-label" for="tts-speed">Velocidade da voz</label>
+      <div class="tts-speed-wrap">
+        <span class="tts-speed-val" id="tts-speed-val">Normal</span>
+        <input type="range" id="tts-speed" min="0.5" max="1.5" step="0.1" value="0.9" class="tts-speed-range" aria-label="Velocidade da leitura" oninput="ttsSetSpeed(this.value)">
+      </div>
+    </div>
   </div>
 </div>
 
@@ -592,10 +620,173 @@
     setTimeout(function() {
       var aBtn = document.getElementById('audio-toggle');
       var lBtn = document.getElementById('labels-toggle');
+      var rBtn = document.getElementById('autoread-toggle');
       if (aBtn) aBtn.setAttribute('aria-checked', String(document.documentElement.classList.contains('a11y-audio')));
       if (lBtn) lBtn.setAttribute('aria-checked', String(document.documentElement.classList.contains('a11y-labels')));
+      if (rBtn) rBtn.setAttribute('aria-checked', String(localStorage.getItem('cadastro_autoread') === 'on'));
     }, 10);
   });
+
+  /* ── Leitura em voz alta (TTS) ─────────────────────────────────────────── */
+  var AUTOREAD_KEY = 'cadastro_autoread';
+  var ttsRate = parseFloat(localStorage.getItem('cadastro_tts_rate') || '0.9');
+  var ttsVoice = null;
+  var ttsSpeaking = false;
+  var ttsCurrentBtn = null;
+
+  function ttsUpdateSpeedLabel(rate) {
+    var el = document.getElementById('tts-speed-val');
+    if (!el) return;
+    var r = parseFloat(rate);
+    if (r <= 0.6) el.textContent = 'Muito lenta';
+    else if (r <= 0.8) el.textContent = 'Lenta';
+    else if (r <= 1.0) el.textContent = 'Normal';
+    else if (r <= 1.2) el.textContent = 'Rápida';
+    else el.textContent = 'Muito rápida';
+  }
+
+  window.ttsSetSpeed = function(val) {
+    ttsRate = parseFloat(val);
+    localStorage.setItem('cadastro_tts_rate', String(ttsRate));
+    ttsUpdateSpeedLabel(ttsRate);
+  };
+
+  function ttsGetLabelText(label) {
+    var clone = label.cloneNode(true);
+    clone.querySelectorAll('.req,.field-hint,.speak-icon').forEach(function(e) { e.remove(); });
+    return clone.textContent.replace(/\s+/g, ' ').trim();
+  }
+
+  function ttsGetStepText(panel) {
+    var parts = [];
+    var titleEl = panel.querySelector('.card-title');
+    if (titleEl) {
+      var tc = titleEl.cloneNode(true);
+      tc.querySelectorAll('[aria-hidden]').forEach(function(e) { e.remove(); });
+      var t = tc.textContent.replace(/\s+/g, ' ').trim();
+      if (t) parts.push(t);
+    }
+    panel.querySelectorAll('.field > label').forEach(function(lbl) {
+      var t = ttsGetLabelText(lbl);
+      if (t) parts.push(t);
+    });
+    return parts.join('. ');
+  }
+
+  function ttsSetBtnState(btn, active) {
+    if (!btn) return;
+    btn.classList.toggle('tts-active', active);
+    var orig = btn.getAttribute('data-label-original');
+    if (orig) btn.setAttribute('aria-label', active ? orig + ' — clique para parar' : orig);
+  }
+
+  window.ttsSpeak = function(text, btn) {
+    if (!window.speechSynthesis || !text) return;
+    if (ttsSpeaking) {
+      window.speechSynthesis.cancel();
+      ttsSpeaking = false;
+      ttsSetBtnState(ttsCurrentBtn, false);
+      if (ttsCurrentBtn === btn) { ttsCurrentBtn = null; return; }
+    }
+    var utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'pt-BR';
+    utt.rate = ttsRate;
+    utt.pitch = 1.05;
+    if (ttsVoice) utt.voice = ttsVoice;
+    utt.onstart = function() { ttsSpeaking = true; ttsCurrentBtn = btn; ttsSetBtnState(btn, true); };
+    utt.onend   = function() { ttsSpeaking = false; ttsSetBtnState(ttsCurrentBtn, false); ttsCurrentBtn = null; };
+    utt.onerror = function() { ttsSpeaking = false; ttsSetBtnState(ttsCurrentBtn, false); ttsCurrentBtn = null; };
+    window.speechSynthesis.speak(utt);
+  };
+
+  function ttsInit() {
+    if (!window.speechSynthesis) {
+      var ns = document.getElementById('tts-not-supported');
+      var tc = document.getElementById('tts-controls');
+      if (ns) ns.style.display = 'flex';
+      if (tc) tc.style.display = 'none';
+      return;
+    }
+
+    /* velocidade salva */
+    var speedSlider = document.getElementById('tts-speed');
+    if (speedSlider) speedSlider.value = ttsRate;
+    ttsUpdateSpeedLabel(ttsRate);
+
+    /* auto-read toggle */
+    var arBtn = document.getElementById('autoread-toggle');
+    if (arBtn) arBtn.setAttribute('aria-checked', String(localStorage.getItem(AUTOREAD_KEY) === 'on'));
+
+    /* ícone de voz em cada label */
+    document.querySelectorAll('.field > label').forEach(function(label) {
+      var text = ttsGetLabelText(label);
+      if (!text) return;
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'speak-icon';
+      var al = 'Ouvir: ' + text;
+      btn.setAttribute('aria-label', al);
+      btn.setAttribute('data-label-original', al);
+      btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+      btn.addEventListener('click', function(e) { e.preventDefault(); e.stopPropagation(); window.ttsSpeak(text, btn); });
+      label.appendChild(btn);
+    });
+
+    /* barra "Ouvir este passo" em cada step-panel */
+    document.querySelectorAll('.step-panel').forEach(function(panel) {
+      var bar = document.createElement('div');
+      bar.className = 'tts-bar';
+      var readBtn = document.createElement('button');
+      readBtn.type = 'button';
+      readBtn.className = 'tts-read-btn';
+      var al = 'Ouvir as perguntas deste passo em voz alta';
+      readBtn.setAttribute('aria-label', al);
+      readBtn.setAttribute('data-label-original', al);
+      readBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg><span>Ouvir as perguntas</span>';
+      readBtn.addEventListener('click', function() { window.ttsSpeak(ttsGetStepText(panel), readBtn); });
+      bar.appendChild(readBtn);
+      var anchor = panel.querySelector('.card-sub') || panel.querySelector('.card-title');
+      if (anchor) anchor.after(bar);
+    });
+
+    /* vozes (Chrome carrega de forma assíncrona) */
+    function loadVoice() {
+      var vs = window.speechSynthesis.getVoices();
+      ttsVoice = vs.find(function(v){ return v.lang==='pt-BR'; }) ||
+                 vs.find(function(v){ return v.lang.startsWith('pt'); }) || null;
+    }
+    loadVoice();
+    window.speechSynthesis.addEventListener('voiceschanged', loadVoice);
+
+    /* observer para auto-read ao trocar de passo */
+    var obs = new MutationObserver(function(muts) {
+      if (localStorage.getItem(AUTOREAD_KEY) !== 'on') return;
+      muts.forEach(function(m) {
+        if (m.type === 'attributes' && m.target.classList.contains('active') && m.target.classList.contains('step-panel')) {
+          var rBtn = m.target.querySelector('.tts-read-btn');
+          setTimeout(function() { window.ttsSpeak(ttsGetStepText(m.target), rBtn); }, 700);
+        }
+      });
+    });
+    document.querySelectorAll('.step-panel').forEach(function(p) {
+      obs.observe(p, { attributes: true, attributeFilter: ['class'] });
+    });
+  }
+
+  /* ── Toggle auto-leitura ────────────────────────────────────────────────── */
+  window.toggleAutoRead = function() {
+    var next = localStorage.getItem(AUTOREAD_KEY) !== 'on';
+    localStorage.setItem(AUTOREAD_KEY, next ? 'on' : 'off');
+    var btn = document.getElementById('autoread-toggle');
+    if (btn) btn.setAttribute('aria-checked', String(next));
+  };
+
+  /* inicializar TTS após DOM pronto */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ttsInit);
+  } else {
+    ttsInit();
+  }
 })();
 </script>
 </body>
