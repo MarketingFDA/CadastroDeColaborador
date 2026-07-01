@@ -2,6 +2,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { google } = require('googleapis');
+const fs = require('fs');
+const path = require('path');
+
+const PDF_SAVE_PATH = process.env.PDF_SAVE_PATH || '/Volumes/RJ-T/DP_Grupo Fradema/Resposta Cadastro de Colaborador';
 
 const app = express();
 app.use(express.json({ limit: '256kb' }));
@@ -175,11 +179,33 @@ async function sendViaGmailApi({ to, replyTo, subject, text, html }) {
   await gmail.users.messages.send({ userId: 'me', requestBody: { raw } });
 }
 
+function savePdfToFolder(pdfBase64, fileName) {
+  try {
+    if (!pdfBase64 || !fileName) return;
+    if (!fs.existsSync(PDF_SAVE_PATH)) {
+      console.warn(`Pasta de destino não encontrada: ${PDF_SAVE_PATH}`);
+      return;
+    }
+    const safeName = fileName.replace(/[/\\:*?"<>|]/g, '_');
+    const filePath = path.join(PDF_SAVE_PATH, safeName);
+    const buffer = Buffer.from(pdfBase64, 'base64');
+    fs.writeFileSync(filePath, buffer);
+    console.log(`PDF salvo em: ${filePath}`);
+  } catch (err) {
+    console.error('Erro ao salvar PDF na pasta:', err.message);
+  }
+}
+
 app.post('/submit', async (req, res) => {
   const data = req.body || {};
 
   if (!data.nomeCompleto || !data.cpf || !data.telefone || !data.emailPessoal) {
     return res.status(400).json({ message: 'Preencha ao menos nome, CPF, telefone e e-mail.' });
+  }
+
+  // Salvar PDF direto na pasta de destino
+  if (data.pdfBase64 && data.fileName) {
+    savePdfToFolder(data.pdfBase64, data.fileName);
   }
 
   const recipients = (process.env.RECRUTAMENTO_EMAILS || '')
@@ -203,7 +229,8 @@ app.post('/submit', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('Falha ao enviar email da ficha de cadastro:', err?.response?.data || err.message);
-    res.status(502).json({ message: 'Não foi possível enviar agora. Tente novamente em instantes.' });
+    // PDF já foi salvo — retornar sucesso parcial
+    res.json({ ok: true, emailWarning: 'PDF salvo, mas falha ao enviar e-mail.' });
   }
 });
 

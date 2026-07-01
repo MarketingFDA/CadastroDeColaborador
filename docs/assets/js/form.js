@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIYICOdOqFOLkqY0QgVMoemDI0_T7xSW0fxye26llOqvlm2N2b5iOHxbQa9h3rfvbYlw/exec';
+const API_URL = window.__CADASTRO_API_URL__ || 'https://legwarmer-ascend-sprinkler.ngrok-free.dev/submit';
 
 const TOTAL_STEPS = 5;
 const STEP_LABELS = {
@@ -251,9 +251,9 @@ form.addEventListener('submit', async (e) => {
     const nome = data.nomeCompleto || 'Colaborador';
     const fileName = 'Cadastro_' + nome.replace(/\s+/g, '_') + '.pdf';
 
-    const res = await fetch(APPS_SCRIPT_URL, {
+    const res = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...data, pdfBase64, fileName }),
     });
     if (!res.ok) {
