@@ -325,3 +325,223 @@ html, body {
   .hero { padding: 28px 18px; }
   .hero h1 { font-size: 22px; }
 }
+
+/* ─── Temas ─────────────────────────────────────────────────────────────── */
+
+html[data-theme="semi-light"] {
+  --bg-1: #f4f3ff; --bg-2: #fff4fb; --bg-3: #effffa;
+  --glass-bg: rgba(255,255,255,0.65);
+  --glass-bg-strong: rgba(255,255,255,0.88);
+  --glass-border: rgba(200,200,220,0.6);
+  --text-1: #1a1c2e; --text-2: #4a5068; --text-3: #8b91a8;
+  --shadow-glass: 0 20px 60px rgba(99,102,241,0.1), 0 2px 8px rgba(31,35,51,0.07);
+}
+
+html[data-theme="semi-dark"] {
+  --bg-1: #1e2038; --bg-2: #25203a; --bg-3: #182929;
+  --glass-bg: rgba(28,30,52,0.72);
+  --glass-bg-strong: rgba(32,35,58,0.86);
+  --glass-border: rgba(255,255,255,0.1);
+  --text-1: #e0e4f4; --text-2: #95a0bf; --text-3: #5a607c;
+  --accent: #818cf8; --accent-2: #f472b6; --accent-3: #34d399;
+  --shadow-glass: 0 20px 60px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.2);
+  --danger: #f87171;
+}
+
+html[data-theme="dark"] {
+  --bg-1: #0d0e1a; --bg-2: #120d18; --bg-3: #091512;
+  --glass-bg: rgba(13,14,26,0.80);
+  --glass-bg-strong: rgba(18,20,36,0.90);
+  --glass-border: rgba(255,255,255,0.07);
+  --text-1: #f0f2ff; --text-2: #848aaa; --text-3: #4a5068;
+  --accent: #818cf8; --accent-2: #f472b6; --accent-3: #34d399;
+  --shadow-glass: 0 20px 60px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+  --danger: #f87171;
+}
+
+html[data-theme="cinza"] {
+  --bg-1: #e8eaed; --bg-2: #f2f3f5; --bg-3: #dde0e4;
+  --glass-bg: rgba(255,255,255,0.62);
+  --glass-bg-strong: rgba(255,255,255,0.84);
+  --glass-border: rgba(180,185,200,0.55);
+  --text-1: #1f2937; --text-2: #4b5563; --text-3: #9ca3af;
+  --accent: #6b7280; --accent-2: #9ca3af; --accent-3: #71717a;
+  --shadow-glass: 0 20px 60px rgba(107,114,128,0.12), 0 2px 8px rgba(31,41,55,0.07);
+}
+
+html[data-theme="semi-dark"] .blob,
+html[data-theme="dark"] .blob { opacity: 0.25; }
+html[data-theme="cinza"] .blob { opacity: 0.3; filter: blur(100px) saturate(20%); }
+
+html[data-theme="semi-dark"] .hero h1,
+html[data-theme="dark"] .hero h1 {
+  background: linear-gradient(135deg, var(--text-1), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+html[data-theme="semi-dark"] .field input,
+html[data-theme="semi-dark"] .field select,
+html[data-theme="semi-dark"] .field textarea,
+html[data-theme="dark"] .field input,
+html[data-theme="dark"] .field select,
+html[data-theme="dark"] .field textarea {
+  color-scheme: dark;
+}
+
+/* ─── Rodapé ────────────────────────────────────────────────────────────── */
+
+.page-footer {
+  margin-top: 18px;
+  text-align: center;
+}
+.footer-credit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--text-3);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.footer-credit strong { color: var(--text-2); font-weight: 600; }
+.footer-sep { opacity: 0.5; }
+
+/* ─── Botões flutuantes ─────────────────────────────────────────────────── */
+
+.float-btn {
+  position: fixed;
+  right: 22px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  z-index: 9000;
+  text-decoration: none;
+}
+.float-btn:hover { transform: scale(1.08); box-shadow: 0 12px 30px rgba(0,0,0,0.22); }
+.float-btn:active { transform: scale(0.96); }
+
+.float-chat {
+  bottom: 22px;
+  background: linear-gradient(135deg, #10b981, #0ea5e9);
+  color: #fff;
+}
+
+.float-a11y {
+  bottom: 82px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+}
+
+/* ─── Painel de personalização ──────────────────────────────────────────── */
+
+.a11y-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 144px;
+  width: 268px;
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(32px) saturate(160%);
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  padding: 16px;
+  z-index: 9100;
+  animation: panel-slide-up 0.22s ease;
+}
+@keyframes panel-slide-up {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.a11y-panel[hidden] { display: none; }
+
+.a11y-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 8px;
+}
+.a11y-panel-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+.a11y-panel-sub {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+.a11y-panel-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-3);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+}
+.a11y-panel-close:hover { color: var(--text-1); background: var(--glass-border); }
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.theme-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  padding: 8px 4px 7px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.theme-opt:hover { background: var(--glass-bg); border-color: var(--glass-border); }
+.theme-opt.active { border-color: var(--accent); background: rgba(99,102,241,0.08); }
+
+.theme-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  border: 2px solid rgba(255,255,255,0.4);
+}
+.swatch-light       { background: linear-gradient(135deg, #eef1ff 40%, #fdf2f8); }
+.swatch-semi-light  { background: linear-gradient(135deg, #f4f3ff 40%, #fff4fb); }
+.swatch-semi-dark   { background: linear-gradient(135deg, #1e2038 40%, #25203a); }
+.swatch-dark        { background: linear-gradient(135deg, #0d0e1a 40%, #120d18); }
+.swatch-cinza       { background: linear-gradient(135deg, #e8eaed 40%, #f2f3f5); }
+
+.theme-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 600px) {
+  .float-btn { right: 14px; width: 46px; height: 46px; }
+  .float-chat { bottom: 14px; }
+  .float-a11y { bottom: 70px; }
+  .a11y-panel { right: 10px; bottom: 130px; width: calc(100vw - 20px); }
+}
