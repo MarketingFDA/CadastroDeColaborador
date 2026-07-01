@@ -420,15 +420,16 @@
   </footer>
 </main>
 
-<!-- Botão 3CX -->
-<a class="float-btn float-chat" href="https://fradema.my3cx.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Fale com o time">
+<!-- Botão 3CX (z-index acima do painel) -->
+<a class="float-btn float-chat" href="https://fradema.my3cx.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Fale com o time pelo chat">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="21" height="21">
     <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13 19.79 19.79 0 0 1 1.63 4.35 2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
   </svg>
+  <span class="float-label" aria-hidden="true">Falar com RH</span>
 </a>
 
 <!-- Botão de personalização visual -->
-<button class="float-btn float-a11y" id="a11y-toggle" aria-label="Personalização visual" aria-expanded="false" onclick="toggleA11yPanel()">
+<button class="float-btn float-a11y" id="a11y-toggle" aria-label="Abrir personalização visual e acessibilidade" aria-expanded="false" onclick="toggleA11yPanel()">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="21" height="21">
     <circle cx="12" cy="12" r="3"/>
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
@@ -436,39 +437,70 @@
     <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
     <path d="M8.46 8.46a5 5 0 0 0 0 7.07"/>
   </svg>
+  <span class="float-label" aria-hidden="true">Personalizar</span>
 </button>
 
 <!-- Painel de personalização -->
-<div class="a11y-panel" id="a11y-panel" role="dialog" aria-modal="true" aria-label="Personalização visual" hidden>
+<div class="a11y-panel" id="a11y-panel" role="dialog" aria-modal="true" aria-label="Personalização visual e acessibilidade" hidden>
   <div class="a11y-panel-head">
     <div>
-      <div class="a11y-panel-title">Personalização Visual</div>
-      <div class="a11y-panel-sub">Para melhor experiência visual</div>
+      <div class="a11y-panel-title">Personalização</div>
+      <div class="a11y-panel-sub">Ajuste o visual e a acessibilidade</div>
     </div>
-    <button class="a11y-panel-close" onclick="toggleA11yPanel()" aria-label="Fechar">
+    <button class="a11y-panel-close" onclick="toggleA11yPanel()" aria-label="Fechar painel">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
+
+  <div class="a11y-section-label">Tema da página</div>
   <div class="theme-grid">
-    <button class="theme-opt" data-theme-val="light" onclick="setTheme('light')" title="Claro">
+    <button class="theme-opt" data-theme-val="light" onclick="setTheme('light')" aria-label="Tema Claro">
       <span class="theme-swatch swatch-light"></span>
       <span class="theme-label">Claro</span>
     </button>
-    <button class="theme-opt" data-theme-val="semi-light" onclick="setTheme('semi-light')" title="Semi Claro">
+    <button class="theme-opt" data-theme-val="semi-light" onclick="setTheme('semi-light')" aria-label="Tema Semi Claro">
       <span class="theme-swatch swatch-semi-light"></span>
       <span class="theme-label">Semi Claro</span>
     </button>
-    <button class="theme-opt" data-theme-val="semi-dark" onclick="setTheme('semi-dark')" title="Semi Escuro">
+    <button class="theme-opt" data-theme-val="semi-dark" onclick="setTheme('semi-dark')" aria-label="Tema Semi Escuro">
       <span class="theme-swatch swatch-semi-dark"></span>
       <span class="theme-label">Semi Escuro</span>
     </button>
-    <button class="theme-opt" data-theme-val="dark" onclick="setTheme('dark')" title="Escuro">
+    <button class="theme-opt" data-theme-val="dark" onclick="setTheme('dark')" aria-label="Tema Escuro">
       <span class="theme-swatch swatch-dark"></span>
       <span class="theme-label">Escuro</span>
     </button>
-    <button class="theme-opt" data-theme-val="cinza" onclick="setTheme('cinza')" title="Cinza">
+    <button class="theme-opt" data-theme-val="cinza" onclick="setTheme('cinza')" aria-label="Tema Cinza">
       <span class="theme-swatch swatch-cinza"></span>
       <span class="theme-label">Cinza</span>
+    </button>
+    <button class="theme-opt" data-theme-val="alto-contraste" onclick="setTheme('alto-contraste')" aria-label="Tema Alto Contraste">
+      <span class="theme-swatch swatch-alto-contraste"></span>
+      <span class="theme-label">Alto Contraste</span>
+    </button>
+  </div>
+
+  <div class="a11y-divider"></div>
+  <div class="a11y-section-label">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13" style="margin-right:5px;vertical-align:middle;"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+    Acessibilidade auditiva
+  </div>
+  <div class="a11y-toggle-row">
+    <div>
+      <div class="a11y-toggle-title">Indicadores visuais ampliados</div>
+      <div class="a11y-toggle-desc">Reforça animações e avisos na tela</div>
+    </div>
+    <button class="a11y-switch" id="audio-toggle" role="switch" aria-checked="false" aria-label="Ativar indicadores visuais ampliados" onclick="toggleAudioMode()">
+      <span class="a11y-switch-knob"></span>
+    </button>
+  </div>
+  <div class="a11y-toggle-row">
+    <div>
+      <div class="a11y-toggle-title">Legendas nos botões</div>
+      <div class="a11y-toggle-desc">Mostra texto em todos os ícones</div>
+    </div>
+    <button class="a11y-switch" id="labels-toggle" role="switch" aria-checked="false" aria-label="Mostrar legendas nos botões" onclick="toggleLabels()">
+      <span class="a11y-switch-knob"></span>
     </button>
   </div>
 </div>
@@ -476,49 +508,95 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="assets/js/form.js"></script>
 <script>
-  (function() {
-    var STORAGE_KEY = 'cadastro_theme';
-    var saved = localStorage.getItem(STORAGE_KEY) || 'light';
-    document.documentElement.setAttribute('data-theme', saved);
-    markActiveTheme(saved);
+(function() {
+  var THEME_KEY  = 'cadastro_theme';
+  var AUDIO_KEY  = 'cadastro_a11y_audio';
+  var LABELS_KEY = 'cadastro_a11y_labels';
 
-    function markActiveTheme(theme) {
-      document.querySelectorAll('.theme-opt').forEach(function(btn) {
-        btn.classList.toggle('active', btn.dataset.themeVal === theme);
-      });
+  /* ── Tema ─────────────────────────────────────────── */
+  function markActiveTheme(theme) {
+    document.querySelectorAll('.theme-opt').forEach(function(btn) {
+      var isActive = btn.dataset.themeVal === theme;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', String(isActive));
+    });
+  }
+
+  var savedTheme = localStorage.getItem(THEME_KEY) || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  markActiveTheme(savedTheme);
+
+  window.setTheme = function(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
+    markActiveTheme(theme);
+  };
+
+  /* ── Painel ───────────────────────────────────────── */
+  window.toggleA11yPanel = function() {
+    var panel  = document.getElementById('a11y-panel');
+    var toggle = document.getElementById('a11y-toggle');
+    var open   = panel.hidden;
+    panel.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+  };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      var panel = document.getElementById('a11y-panel');
+      if (!panel.hidden) { panel.hidden = true; document.getElementById('a11y-toggle').setAttribute('aria-expanded','false'); }
     }
+  });
 
-    window.setTheme = function(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem(STORAGE_KEY, theme);
-      markActiveTheme(theme);
-    };
+  document.addEventListener('click', function(e) {
+    var panel  = document.getElementById('a11y-panel');
+    var toggle = document.getElementById('a11y-toggle');
+    if (!panel.hidden && !panel.contains(e.target) && !toggle.contains(e.target)) {
+      panel.hidden = true;
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
 
-    window.toggleA11yPanel = function() {
-      var panel = document.getElementById('a11y-panel');
-      var toggle = document.getElementById('a11y-toggle');
-      var isHidden = panel.hidden;
-      panel.hidden = !isHidden;
-      toggle.setAttribute('aria-expanded', String(isHidden));
-      if (isHidden) panel.focus();
-    };
+  /* ── Modo visual ampliado (acessibilidade auditiva) ─ */
+  function applyAudioMode(on) {
+    document.documentElement.classList.toggle('a11y-audio', on);
+    var btn = document.getElementById('audio-toggle');
+    if (btn) btn.setAttribute('aria-checked', String(on));
+  }
+  var savedAudio = localStorage.getItem(AUDIO_KEY) === 'on';
+  applyAudioMode(savedAudio);
 
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        var panel = document.getElementById('a11y-panel');
-        if (!panel.hidden) toggleA11yPanel();
-      }
-    });
+  window.toggleAudioMode = function() {
+    var next = !document.documentElement.classList.contains('a11y-audio');
+    localStorage.setItem(AUDIO_KEY, next ? 'on' : 'off');
+    applyAudioMode(next);
+  };
 
-    document.addEventListener('click', function(e) {
-      var panel = document.getElementById('a11y-panel');
-      var toggle = document.getElementById('a11y-toggle');
-      if (!panel.hidden && !panel.contains(e.target) && e.target !== toggle) {
-        panel.hidden = true;
-        toggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  })();
+  /* ── Legendas nos botões ──────────────────────────── */
+  function applyLabels(on) {
+    document.documentElement.classList.toggle('a11y-labels', on);
+    var btn = document.getElementById('labels-toggle');
+    if (btn) btn.setAttribute('aria-checked', String(on));
+  }
+  var savedLabels = localStorage.getItem(LABELS_KEY) === 'on';
+  applyLabels(savedLabels);
+
+  window.toggleLabels = function() {
+    var next = !document.documentElement.classList.contains('a11y-labels');
+    localStorage.setItem(LABELS_KEY, next ? 'on' : 'off');
+    applyLabels(next);
+  };
+
+  /* Sincronizar estado visual dos toggles ao abrir painel */
+  document.getElementById('a11y-toggle').addEventListener('click', function() {
+    setTimeout(function() {
+      var aBtn = document.getElementById('audio-toggle');
+      var lBtn = document.getElementById('labels-toggle');
+      if (aBtn) aBtn.setAttribute('aria-checked', String(document.documentElement.classList.contains('a11y-audio')));
+      if (lBtn) lBtn.setAttribute('aria-checked', String(document.documentElement.classList.contains('a11y-labels')));
+    }, 10);
+  });
+})();
 </script>
 </body>
 </html>
