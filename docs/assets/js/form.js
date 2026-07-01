@@ -1,4 +1,7 @@
-const API_URL = window.__CADASTRO_API_URL__ || 'https://legwarmer-ascend-sprinkler.ngrok-free.dev/submit';
+// Backend local (proxy ngrok — funciona enquanto o Mac estiver ligado, salva direto na pasta)
+const LOCAL_BACKEND_URL = 'https://legwarmer-ascend-sprinkler.ngrok-free.dev/submit';
+// Apps Script (nuvem Google — funciona 24/7, salva no Google Drive)
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxIYICOdOqFOLkqY0QgVMoemDI0_T7xSW0fxye26llOqvlm2N2b5iOHxbQa9h3rfvbYlw/exec';
 
 const TOTAL_STEPS = 5;
 const STEP_LABELS = {
@@ -250,19 +253,25 @@ form.addEventListener('submit', async (e) => {
     const pdfBase64 = buildPDF(data);
     const nome = data.nomeCompleto || 'Colaborador';
     const fileName = 'Cadastro_' + nome.replace(/\s+/g, '_') + '.pdf';
+    const body = JSON.stringify({ ...data, pdfBase64, fileName });
 
-    const res = await fetch(API_URL, {
+    // Tenta ambos em paralelo — qualquer um que funcionar é suficiente
+    const localPromise = fetch(LOCAL_BACKEND_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, pdfBase64, fileName }),
-    });
-    if (!res.ok) {
-      let message = 'Não foi possível enviar agora. Tente novamente em instantes.';
-      try {
-        const errBody = await res.json();
-        if (errBody?.message) message = errBody.message;
-      } catch { /* sem corpo JSON */ }
-      throw new Error(message);
+      body,
+    }).then(r => ({ ok: r.ok, src: 'local' })).catch(() => ({ ok: false, src: 'local' }));
+
+    const cloudPromise = fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body,
+    }).then(r => r.json()).then(j => ({ ok: !!j?.ok, src: 'cloud' })).catch(() => ({ ok: false, src: 'cloud' }));
+
+    const [localResult, cloudResult] = await Promise.all([localPromise, cloudPromise]);
+
+    if (!localResult.ok && !cloudResult.ok) {
+      throw new Error('Não foi possível enviar agora. Verifique sua conexão e tente novamente.');
     }
 
     form.style.display = 'none';
